@@ -93,6 +93,9 @@
     formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
     formatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
     formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
+    NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+    NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
+    NSString *encReceipt = [receiptData base64EncodedStringWithOptions:0];
     for (SKPaymentTransaction *transaction in transactions) {
       NSString *transactionDateString = [formatter stringFromDate:transaction.transactionDate];
       [validTransactions addObject:@{
@@ -103,6 +106,7 @@
                                  }];
     }
     [result setObject:validTransactions forKey:@"transactions"];
+    [result setObject:NILABLE(encReceipt) forKey:@"receipt"];
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
     [pluginResult setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];

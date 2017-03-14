@@ -138,6 +138,7 @@ inAppPurchase.getReceipt = function () {
 inAppPurchase.restorePurchases = function () {
   return nativeCall('restorePurchases').then(function (res) {
     var arr = [];
+    let response = {};
     if (res && res.transactions) {
       arr = res.transactions.map(function (val) {
         return {
@@ -147,8 +148,12 @@ inAppPurchase.restorePurchases = function () {
           state: val.transactionState
         };
       });
+      response.purchases = arr;
+      if (res.receipt) {
+        response.receipt = res.receipt;
+      }
     }
-    return arr;
+    return response;
   });
 };
 
